@@ -2,8 +2,20 @@
 
 A modern, lightweight, isolated multi-version Minecraft launcher built for VOMLabs.
 
-> **⚠️ WARNING: Active Migration In Progress**
+> **⚠️ Development Paused**
 >
+> Development of Vesper Client is currently **paused**.
+>
+> - The team has paused active feature development and is taking a break while
+>   stepping back to focus on other commitments.
+> - We are currently **mid-refactor**.
+> - Development was paused on **October 14, 2026** — approximately **6 weeks ago**.
+> - The source code remains **open source and stable**.
+> - The latest release remains usable and installable.
+> - No new features are currently being worked on.
+
+> **⚠️ WARNING: Active Migration In Progress**
+
 > This project is currently undergoing a major UI framework migration from Slint to GPUI.
 > **This software is NOT secure and should NOT be used in production.**
 > Only the Login page prototype has been migrated so far. The full UI migration
@@ -159,3 +171,9 @@ RUST_LOG=vesper_core::auth=trace cargo run
 ## License
 
 This project is licensed under the MIT License. See the LICENSE file for details.
+
+## About
+
+Minecraft Launchers, Redefined
+
+[launcher.devflare.de/](https://launcher.devflare.de/)
