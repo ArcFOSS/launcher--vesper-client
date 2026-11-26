@@ -22,6 +22,16 @@ pub use tokens::{
     ControlSize, Density, Elevation, PROSE_WIDTH, Radius, TextSize, radius, text_size,
 };
 
+/// A `0xRRGGBB` literal as an opaque color.
+fn hex_rgba(hex: u32) -> gpui::Rgba {
+    gpui::Rgba {
+        r: ((hex >> 16) & 0xff) as f32 / 255.0,
+        g: ((hex >> 8) & 0xff) as f32 / 255.0,
+        b: (hex & 0xff) as f32 / 255.0,
+        a: 1.0,
+    }
+}
+
 /// Which set of palette tokens is in effect.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub enum Mode {
@@ -70,12 +80,23 @@ impl Theme {
     /// the Windows UI (Fluent) look on Windows, the GTK (Adwaita) look on Linux,
     /// and the macOS appearance on MacOS. Falls back to the app default.
     pub fn native() -> Self {
-        match std::env::consts::OS {
-            "macos" => Self::new(Mode::Light, false),
-            "windows" => Self::new(Mode::Light, false),
-            "linux" => Self::new(Mode::Light, false),
-            _ => Self::default(),
-        }
+        // (mode, accent, on-accent) per platform, in `0xRRGGBB` literals.
+        // Emphasis comes from the platform's own accent hue: Windows blue,
+        // macOS system blue, Linux Adwaita blue — same quiet treatment Ely's
+        // palette gives its near-black ink, but in the host's own color.
+        let (mode, accent_hex, on_accent_hex) = match std::env::consts::OS {
+            "macos" => (Mode::Light, 0x007AFFu32, 0xFFFFFFu32),
+            "windows" => (Mode::Light, 0x0078D4u32, 0xFFFFFFu32),
+            "linux" => (Mode::Light, 0x3584E4u32, 0xFFFFFFu32),
+            _ => (Mode::Dark, 0x0A84FFu32, 0xF3F1F0u32),
+        };
+        let accent = hex_rgba(accent_hex);
+        let on_accent = hex_rgba(on_accent_hex);
+        let mut theme = Self::new(mode, false);
+        theme.colors.accent = accent;
+        theme.colors.accent_hover = mix(accent, on_accent, 0.12);
+        theme.colors.on_accent = on_accent;
+        theme
     }
 
     /// A theme for `mode`, with stronger borders when `high_contrast`.
