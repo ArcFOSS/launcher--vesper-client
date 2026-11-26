@@ -88,6 +88,11 @@ impl VesperConfig {
         self.profiles.push(profile);
     }
 
+    /// Points the stored configuration at the profile a session belongs to.
+    pub fn set_active_profile(&mut self, id: &str) {
+        self.active_profile_id = Some(id.to_string());
+    }
+
     pub fn remove_profile(&mut self, id: &str) -> bool {
         let before = self.profiles.len();
         self.profiles.retain(|p| p.id != id);

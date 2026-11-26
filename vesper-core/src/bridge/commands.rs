@@ -19,6 +19,10 @@ pub enum BackendCommand {
     InstanceDelete {
         id: String,
     },
+    InstanceRename {
+        id: String,
+        name: String,
+    },
 
     ModSearch {
         query: String,

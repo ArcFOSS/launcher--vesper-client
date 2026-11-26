@@ -4,6 +4,10 @@
 //! design tokens, `components` turns them into shape, and views compose
 //! components into screens.
 
+pub mod app;
 pub mod components;
+pub mod instances_view;
 pub mod login_view;
+pub mod navigation;
+pub mod sidebar;
 pub mod theme;

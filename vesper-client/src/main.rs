@@ -1,3 +1,4 @@
+mod backend;
 mod ui;
 
 use std::sync::{Arc, Mutex};
@@ -6,7 +7,7 @@ use anyhow::Result;
 use gpui::{AppContext, Application, WindowBounds, WindowOptions, px};
 use tokio::sync::mpsc;
 
-use ui::login_view::LoginView;
+use ui::app::App;
 
 use vesper_core::bridge::commands::BackendCommand;
 use vesper_core::bridge::updates::UiUpdate;
@@ -22,11 +23,13 @@ fn main() -> Result<()> {
 
     tracing::info!("Vesper Client starting up (GPUI)");
 
-    // Shared state for async auth updates
+    // Shared state for async backend updates.
     let latest_update: Arc<Mutex<Option<UiUpdate>>> = Arc::new(Mutex::new(None));
 
-    // MPSC channel for commands (not actively used in prototype — auth runs inline)
-    let (cmd_tx, _cmd_rx) = mpsc::channel::<BackendCommand>(64);
+    // Channel for backend commands from the UI thread.
+    let (cmd_tx, cmd_rx) = mpsc::channel::<BackendCommand>(64);
+
+    backend::spawn(cmd_rx, latest_update.clone());
 
     Application::new()
         .run(move |cx| {
@@ -40,7 +43,7 @@ fn main() -> Result<()> {
                     window_bounds: Some(WindowBounds::Windowed(bounds)),
                     ..Default::default()
                 },
-                |_, cx| cx.new(|_cx| LoginView::new(cmd_tx, latest_update)),
+                |_, cx| cx.new(|_cx| App::new(cmd_tx, latest_update)),
             )
             .unwrap();
         });

@@ -113,6 +113,22 @@ impl InstanceManager {
         Ok(())
     }
 
+    pub fn rename(&self, id: &str, name: &str) -> CoreResult<InstanceInfo> {
+        let mut config = self.get(id)?;
+        if config.name == name {
+            return Ok(InstanceInfo {
+                id: id.to_string(),
+                config,
+            });
+        }
+        config.name = name.to_string();
+        self.update(id, &config)?;
+        Ok(InstanceInfo {
+            id: id.to_string(),
+            config,
+        })
+    }
+
     pub fn minecraft_dir(&self, id: &str) -> PathBuf {
         self.base_dir.join(id).join(".minecraft")
     }

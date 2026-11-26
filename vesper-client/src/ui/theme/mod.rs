@@ -66,6 +66,18 @@ impl Default for Theme {
 }
 
 impl Theme {
+    /// The theme that reads as native to the platform the app is running on:
+    /// the Windows UI (Fluent) look on Windows, the GTK (Adwaita) look on Linux,
+    /// and the macOS appearance on MacOS. Falls back to the app default.
+    pub fn native() -> Self {
+        match std::env::consts::OS {
+            "macos" => Self::new(Mode::Light, false),
+            "windows" => Self::new(Mode::Light, false),
+            "linux" => Self::new(Mode::Light, false),
+            _ => Self::default(),
+        }
+    }
+
     /// A theme for `mode`, with stronger borders when `high_contrast`.
     pub fn new(mode: Mode, high_contrast: bool) -> Self {
         Self {

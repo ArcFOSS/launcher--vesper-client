@@ -25,6 +25,9 @@ pub enum UiUpdate {
     InstanceDeleted {
         id: String,
     },
+    InstanceRenamed {
+        id: String,
+    },
     InstanceError {
         message: String,
     },
