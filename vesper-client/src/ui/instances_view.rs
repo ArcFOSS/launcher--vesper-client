@@ -375,34 +375,11 @@ impl InstancesView {
     }
 
     fn library_body(&mut self, cx: &mut Context<Self>) -> Div {
-        let theme = self.theme;
         if self.show_create {
-            let focus = self.create_focus.clone().unwrap_or_else(|| cx.focus_handle());
-            self.create_focus = Some(focus.clone());
-            return div()
-                .flex()
-                .flex_col()
-                .size_full()
-                .child(
-                    Card::new().render(
-                        theme,
-                        div()
-                            .flex()
-                            .flex_col()
-                            .gap(px(16.0))
-                            .child(
-                                div()
-                                    .text_size(px(text_size(TextSize::Lg)))
-                                    .font_weight(weights::SEMIBOLD)
-                                    .text_color(Hsla::from(theme.colors.fg))
-                                    .child("New Instance"),
-                            )
-                            .child(self.create_field(cx, Field::CreateName, &focus))
-                            .child(self.create_field(cx, Field::CreateVersion, &focus))
-                            .child(self.create_actions(cx)),
-                    ),
-                );
+            return self.create_form(cx);
         }
+
+        let theme = self.theme;
 
         if self.is_loading {
             return div()
@@ -477,6 +454,36 @@ impl InstancesView {
             .py(px(8.0))
             .gap(px(8.0))
             .children(instances.iter().map(|i| self.instance_card(cx, i.clone())))
+    }
+
+    /// The create form: one card, a column, the fields, and the actions.
+    fn create_form(&mut self, cx: &mut Context<Self>) -> Div {
+        let theme = self.theme;
+        let focus = self.create_focus.clone().unwrap_or_else(|| cx.focus_handle());
+        self.create_focus = Some(focus.clone());
+        div()
+            .flex()
+            .flex_col()
+            .size_full()
+            .child(
+                Card::new().render(
+                    theme,
+                    div()
+                        .flex()
+                        .flex_col()
+                        .gap(px(16.0))
+                        .child(
+                            div()
+                                .text_size(px(text_size(TextSize::Lg)))
+                                .font_weight(weights::SEMIBOLD)
+                                .text_color(Hsla::from(theme.colors.fg))
+                                .child("New Instance"),
+                        )
+                        .child(self.create_field(cx, Field::CreateName, &focus))
+                        .child(self.create_field(cx, Field::CreateVersion, &focus))
+                        .child(self.create_actions(cx)),
+                ),
+            )
     }
 
     /// One labelled text field of the create form.
